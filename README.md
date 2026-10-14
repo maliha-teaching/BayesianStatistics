@@ -1,1 +1,1 @@
-# BayesianStatistics
+# Bayesian Statistics
