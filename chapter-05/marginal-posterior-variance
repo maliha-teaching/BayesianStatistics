@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marginal posterior of the variance (Section 5.3)</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1b2a2a; --muted:#587070; --teal:#008080; --tealdark:#005959;
+  --panel:#e0f2f1; --rule:#b9d8d6; --chip:#008080; --chipink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10191a; --ink:#e3eeee; --muted:#9bb5b5; --teal:#4fc3c3; --tealdark:#7fd6d6;
+    --panel:#17302f; --rule:#2c4a49; --chip:#4fc3c3; --chipink:#06201f;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Georgia,"Times New Roman",serif}
+header{background:var(--teal);color:#fff;padding:1.1rem 1.5rem}
+header h1{margin:0;font-size:1.35rem;font-weight:600}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem;max-width:1180px;margin:0 auto;padding:1.5rem}
+main{min-width:0}
+main p{margin:.9rem 0;max-width:68ch}
+.model{border-left:4px solid var(--teal);padding:.2rem 1rem;margin:0 0 1.2rem;background:var(--panel)}
+.model b{color:var(--tealdark)}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;margin:.7em 0!important}
+.chip{font:600 .8rem/1 system-ui,sans-serif;background:var(--chip);color:var(--chipink);border:0;border-radius:3px;padding:.4rem .6rem;cursor:pointer;margin:.2rem 0 .6rem}
+.chip[aria-expanded="true"]{outline:2px solid var(--tealdark);outline-offset:2px}
+.chip:focus-visible{outline:3px solid var(--tealdark);outline-offset:2px}
+.note{display:none;background:var(--panel);border-left:4px solid var(--teal);padding:.6rem 1rem;font-size:.95rem;line-height:1.55}
+.note h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--tealdark)}
+.note p{margin:.5rem 0}
+aside{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto}
+#panel .note{display:block}
+#empty{color:var(--muted);font:.9rem/1.5 system-ui,sans-serif;border:1px dashed var(--rule);padding:1rem}
+.inline-open{display:block}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:1rem}
+  aside{display:none}
+}
+@media print{
+  header{background:none;color:#000}
+  aside{display:none}.chip{display:none}
+  .note{display:block;break-inside:avoid}
+  .wrap{display:block}
+}
+</style>
+</head>
+<body>
+<header><h1>Marginal posterior of the variance (Section 5.3)</h1></header>
+
+<div class="wrap">
+<main>
+
+<p>We work with the precision \(\tilde\sigma^2=1/\sigma^2\), because the gamma family is conjugate for it (equivalently, \(\sigma^2\) has an inverse-gamma distribution). From here on we write \(\tilde\sigma^2\).</p>
+
+<div class="model">
+<b>Model.</b>
+$$Y_i\mid\theta,\tilde\sigma^2\overset{iid}{\sim}N\!\Big(\theta,\frac{1}{\tilde\sigma^2}\Big),\quad
+\theta\mid\tilde\sigma^2\sim N\!\Big(\mu_0,\frac{1}{k_0\tilde\sigma^2}\Big),\quad
+\tilde\sigma^2\sim\text{Gamma}\!\Big(\frac{\nu_0}{2},\frac{\nu_0\sigma_0^2}{2}\Big)$$
+</div>
+
+<p><b>Proof.</b> The joint posterior is proportional to the likelihood times the joint prior, and the joint prior factors as \(p(\theta,\tilde\sigma^2)=p(\theta\mid\tilde\sigma^2)\,p(\tilde\sigma^2)\). Hence</p>
+$$p(\theta,\tilde\sigma^2\mid y)\;\propto\;p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\,p(\tilde\sigma^2).$$
+
+<p>To obtain the marginal posterior of \(\tilde\sigma^2\), integrate out \(\theta\). Since \(p(\tilde\sigma^2)\) does not involve \(\theta\), it moves outside the integral:</p>
+$$p(\tilde\sigma^2\mid y)=\int p(\theta,\tilde\sigma^2\mid y)\,d\theta\;\propto\;p(\tilde\sigma^2)\int p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\,d\theta. \tag{1}$$
+
+<p>The prior of \(\theta\) given \(\tilde\sigma^2\) has precision \(k_0\tilde\sigma^2\), so</p>
+$$p(\theta\mid\tilde\sigma^2)\propto(\tilde\sigma^2)^{1/2}\exp\Big\{-\frac{\tilde\sigma^2k_0}{2}(\theta-\mu_0)^2\Big\}. \tag{2}$$
+
+<p>The likelihood is, with \(s^2=\frac{1}{n-1}\sum_{i=1}^n(y_i-\bar y)^2\) the sample variance,</p>
+$$p(y\mid\theta,\tilde\sigma^2)\propto(\tilde\sigma^2)^{n/2}\exp\Big\{-\frac{\tilde\sigma^2}{2}\sum_{i=1}^n(y_i-\theta)^2\Big\}=(\tilde\sigma^2)^{n/2}\exp\Big\{-\frac{\tilde\sigma^2}{2}\big[(n-1)s^2+n(\bar y-\theta)^2\big]\Big\}. \tag{3}$$
+<button class="chip" data-note="n1" aria-expanded="false">Side note: split of the sum</button>
+
+<p>Multiplying (2) and (3), and writing \(Q(\theta)=n(\bar y-\theta)^2+k_0(\theta-\mu_0)^2\),</p>
+$$p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\propto(\tilde\sigma^2)^{\frac{n+1}{2}}\exp\Big\{-\frac{\tilde\sigma^2}{2}\big[(n-1)s^2+Q(\theta)\big]\Big\}.$$
+
+<p>Now, with \(k_n=k_0+n\) and \(\mu_n=\dfrac{k_0\mu_0+n\bar y}{k_n}\), we have</p>
+$$Q(\theta)=k_n(\theta-\mu_n)^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2 .$$
+<button class="chip" data-note="n2" aria-expanded="false">Side note: decomposition of Q(θ)</button>
+
+<p>so</p>
+$$p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\propto(\tilde\sigma^2)^{\frac{n+1}{2}}\exp\Big\{-\frac{\tilde\sigma^2}{2}\Big[(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2\Big]\Big\}\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}. \tag{4}$$
+
+<p>The first two factors of (4) are free of \(\theta\) and come outside the integral:</p>
+$$\int p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\,d\theta\propto(\tilde\sigma^2)^{\frac{n+1}{2}}\exp\Big\{-\frac{\tilde\sigma^2}{2}\Big[(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2\Big]\Big\}\int\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}d\theta .$$
+
+<p>The remaining integral is the area of a Normal kernel:</p>
+$$\int\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}d\theta=\sqrt{\frac{2\pi}{\tilde\sigma^2k_n}}\;\propto\;(\tilde\sigma^2)^{-1/2}.$$
+<button class="chip" data-note="n3" aria-expanded="false">Side note: Normal integral</button>
+
+<p>The powers of \(\tilde\sigma^2\) combine as \((\tilde\sigma^2)^{\frac{n+1}{2}}(\tilde\sigma^2)^{-\frac12}=(\tilde\sigma^2)^{\frac n2}\), so</p>
+$$\int p(y\mid\theta,\tilde\sigma^2)\,p(\theta\mid\tilde\sigma^2)\,d\theta\propto(\tilde\sigma^2)^{n/2}\exp\Big\{-\frac{\tilde\sigma^2}{2}\Big[(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2\Big]\Big\}. \tag{5}$$
+
+<p>Now return the prior of \(\tilde\sigma^2\), which is</p>
+$$p(\tilde\sigma^2)\propto(\tilde\sigma^2)^{\frac{\nu_0}{2}-1}\exp\Big\{-\tilde\sigma^2\frac{\nu_0\sigma_0^2}{2}\Big\}.$$
+<p>Substituting this and (5) into (1),</p>
+$$p(\tilde\sigma^2\mid y)\propto(\tilde\sigma^2)^{\frac{\nu_0}{2}-1}e^{-\tilde\sigma^2\frac{\nu_0\sigma_0^2}{2}}\cdot(\tilde\sigma^2)^{\frac n2}\exp\Big\{-\frac{\tilde\sigma^2}{2}\Big[(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2\Big]\Big\}.$$
+
+<p>Adding the powers and combining the exponents,</p>
+$$p(\tilde\sigma^2\mid y)\propto(\tilde\sigma^2)^{\frac{\nu_0+n}{2}-1}\exp\Big\{-\tilde\sigma^2\,\frac{\nu_0\sigma_0^2+(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2}{2}\Big\}.$$
+
+<p>This is the kernel \(x^{\alpha-1}e^{-\beta x}\) of a gamma density. Therefore</p>
+$$\boxed{\;\tilde\sigma^2\mid y\sim\text{Gamma}\!\left(\frac{\nu_0+n}{2},\;\frac{\nu_0\sigma_0^2+(n-1)s^2+\frac{nk_0}{k_0+n}(\bar y-\mu_0)^2}{2}\right)\;}$$
+
+<p>With \(\nu_n=\nu_0+n\), this is \(\text{Gamma}(\nu_n/2,\,\nu_n\sigma_n^2/2)\) with</p>
+$$\nu_n\sigma_n^2=\nu_0\sigma_0^2+(n-1)s^2+\frac{k_0n}{k_n}(\bar y-\mu_0)^2. \qquad\blacksquare$$
+
+<!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
+<div class="note" id="n1">
+<h3>Split of the sum</h3>
+$$\sum(y_i-\theta)^2=\sum\big[(y_i-\bar y)+(\bar y-\theta)\big]^2=\sum(y_i-\bar y)^2+2(\bar y-\theta)\sum(y_i-\bar y)+n(\bar y-\theta)^2 .$$
+<p>Since \(\sum(y_i-\bar y)=0\), the middle term vanishes. Also \(\sum(y_i-\bar y)^2=(n-1)s^2\), so the sum equals \((n-1)s^2+n(\bar y-\theta)^2\).</p>
+</div>
+
+<div class="note" id="n2">
+<h3>Decomposition of \(Q(\theta)\)</h3>
+<p>Expand each square:</p>
+$$n(\bar y-\theta)^2=n\bar y^2-2n\bar y\,\theta+n\theta^2,\qquad k_0(\theta-\mu_0)^2=k_0\theta^2-2k_0\mu_0\,\theta+k_0\mu_0^2 .$$
+<p>Add and collect powers of \(\theta\), using \(n+k_0=k_n\):</p>
+$$Q(\theta)=k_n\theta^2-2(n\bar y+k_0\mu_0)\theta+n\bar y^2+k_0\mu_0^2 .$$
+<p>Factor \(k_n\) out of the \(\theta\) terms and use \(\mu_n=\dfrac{n\bar y+k_0\mu_0}{k_n}\):</p>
+$$Q(\theta)=k_n\big[\theta^2-2\mu_n\theta\big]+n\bar y^2+k_0\mu_0^2 .$$
+<p>Add and subtract \(\mu_n^2\) inside the bracket:</p>
+$$Q(\theta)=k_n(\theta-\mu_n)^2-k_n\mu_n^2+n\bar y^2+k_0\mu_0^2 .$$
+<p>Since \(k_n\mu_n^2=\dfrac{(n\bar y+k_0\mu_0)^2}{k_n}\), the \(\theta\)-free terms over \(k_n\) are</p>
+$$-k_n\mu_n^2+n\bar y^2+k_0\mu_0^2=\frac{(n+k_0)(n\bar y^2+k_0\mu_0^2)-(n\bar y+k_0\mu_0)^2}{k_n}.$$
+<p>Expand the product and the square:</p>
+$$(n+k_0)(n\bar y^2+k_0\mu_0^2)=n^2\bar y^2+nk_0\mu_0^2+nk_0\bar y^2+k_0^2\mu_0^2,$$
+$$(n\bar y+k_0\mu_0)^2=n^2\bar y^2+2nk_0\bar y\mu_0+k_0^2\mu_0^2 .$$
+<p>Subtracting, the terms \(n^2\bar y^2\) and \(k_0^2\mu_0^2\) cancel:</p>
+$$nk_0\mu_0^2+nk_0\bar y^2-2nk_0\bar y\mu_0=nk_0(\bar y^2-2\bar y\mu_0+\mu_0^2)=nk_0(\bar y-\mu_0)^2 .$$
+<p>Dividing by \(k_n\) gives \(\dfrac{nk_0}{k_n}(\bar y-\mu_0)^2\), which proves the decomposition.</p>
+<p>Finally, the exponent in (4) is a sum and \(e^{A+B}=e^Ae^B\), so the only factor containing \(\theta\) is the one with \((\theta-\mu_n)^2\).</p>
+</div>
+
+<div class="note" id="n3">
+<h3>Normal integral</h3>
+<p>The integral we have is</p>
+$$\int\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}d\theta .$$
+<p>This is a Normal kernel in \(\theta\) with mean \(\mu_n\) and precision \(\tilde\sigma^2k_n\). The Normal density with these parameters is</p>
+$$\sqrt{\frac{\tilde\sigma^2k_n}{2\pi}}\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\},$$
+<p>which integrates to 1 over \(\theta\). So multiply and divide the integral by its normalising constant:</p>
+$$\int\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}d\theta=\sqrt{\frac{2\pi}{\tilde\sigma^2k_n}}\underbrace{\int\sqrt{\frac{\tilde\sigma^2k_n}{2\pi}}\exp\Big\{-\frac{\tilde\sigma^2k_n}{2}(\theta-\mu_n)^2\Big\}d\theta}_{=\,1}=\sqrt{\frac{2\pi}{\tilde\sigma^2k_n}} .$$
+<p>Writing \(\sqrt{\dfrac{2\pi}{\tilde\sigma^2k_n}}=\sqrt{\dfrac{2\pi}{k_n}}\,(\tilde\sigma^2)^{-1/2}\), the factor \(\sqrt{2\pi/k_n}\) does not involve \(\tilde\sigma^2\), so it is absorbed in \(\propto\). This leaves \((\tilde\sigma^2)^{-1/2}\), which is the factor used in the main equation.</p>
+</div>
+
+</main>
+
+<aside aria-live="polite">
+  <div id="empty">Click a "Side note" button to see the working here.</div>
+  <div id="panel"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+  var wide = window.matchMedia('(min-width: 901px)');
+  var chips = document.querySelectorAll('.chip');
+  var panel = document.getElementById('panel');
+  var empty = document.getElementById('empty');
+  var openId = null;
+
+  function closeAll(){
+    chips.forEach(function(c){ c.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.note.inline-open').forEach(function(n){ n.classList.remove('inline-open'); });
+    panel.innerHTML = ''; empty.style.display = 'block';
+    openId = null;
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var id = chip.dataset.note;
+      var wasOpen = (openId === id);
+      closeAll();
+      if (wasOpen) return;
+      var note = document.getElementById(id);
+      chip.setAttribute('aria-expanded','true');
+      openId = id;
+      if (wide.matches){
+        panel.appendChild(note.cloneNode(true));
+        empty.style.display = 'none';
+      } else {
+        chip.insertAdjacentElement('afterend', note);
+        note.classList.add('inline-open');
+      }
+    });
+  });
+  wide.addEventListener('change', closeAll);
+})();
+</script>
+</body>
+</html>
