@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marginal posterior of θ (Section 5.3)</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1b2a2a; --muted:#587070; --teal:#008080; --tealdark:#005959;
+  --panel:#e0f2f1; --rule:#b9d8d6; --chip:#008080; --chipink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10191a; --ink:#e3eeee; --muted:#9bb5b5; --teal:#4fc3c3; --tealdark:#7fd6d6;
+    --panel:#17302f; --rule:#2c4a49; --chip:#4fc3c3; --chipink:#06201f;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Georgia,"Times New Roman",serif}
+header{background:var(--teal);color:#fff;padding:1.1rem 1.5rem}
+header h1{margin:0;font-size:1.35rem;font-weight:600}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem;max-width:1180px;margin:0 auto;padding:1.5rem}
+main{min-width:0}
+main p{margin:.9rem 0;max-width:68ch}
+.model{border-left:4px solid var(--teal);padding:.2rem 1rem;margin:0 0 1.2rem;background:var(--panel)}
+.model b{color:var(--tealdark)}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;margin:.7em 0!important}
+.chip{font:600 .8rem/1 system-ui,sans-serif;background:var(--chip);color:var(--chipink);border:0;border-radius:3px;padding:.4rem .6rem;cursor:pointer;margin:.2rem 0 .6rem}
+.chip[aria-expanded="true"]{outline:2px solid var(--tealdark);outline-offset:2px}
+.chip:focus-visible{outline:3px solid var(--tealdark);outline-offset:2px}
+.note{display:none;background:var(--panel);border-left:4px solid var(--teal);padding:.6rem 1rem;font-size:.95rem;line-height:1.55}
+.note h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--tealdark)}
+.note p{margin:.5rem 0}
+aside{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto}
+#panel .note{display:block}
+#empty{color:var(--muted);font:.9rem/1.5 system-ui,sans-serif;border:1px dashed var(--rule);padding:1rem}
+.inline-open{display:block}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:1rem}
+  aside{display:none}
+}
+@media print{
+  header{background:none;color:#000}
+  aside{display:none}.chip{display:none}
+  .note{display:block;break-inside:avoid}
+  .wrap{display:block}
+}
+</style>
+</head>
+<body>
+<header><h1>Marginal posterior of θ (Section 5.3)</h1></header>
+
+<div class="wrap">
+<main>
+
+<p>We want the marginal posterior of \(\theta\). Given \(\tilde\sigma^2=1/\sigma^2\), the parameter \(\theta\) is Normal. But \(\tilde\sigma^2\) is itself uncertain, with a Gamma posterior, so the marginal of \(\theta\) is a Normal averaged over that uncertainty. We show that this average is a Student \(t\) distribution.</p>
+
+<div class="model">
+<b>Model.</b>
+$$Y_i\mid\theta,\tilde\sigma^2\overset{iid}{\sim}N\!\Big(\theta,\frac{1}{\tilde\sigma^2}\Big),\quad
+\theta\mid\tilde\sigma^2\sim N\!\Big(\mu_0,\frac{1}{k_0\tilde\sigma^2}\Big),\quad
+\tilde\sigma^2\sim\text{Gamma}\!\Big(\frac{\nu_0}{2},\frac{\nu_0\sigma_0^2}{2}\Big)$$
+</div>
+
+<p><b>Proof.</b> Let \(k_n=k_0+n\), \(\nu_n=\nu_0+n\), \(\mu_n=\dfrac{k_0\mu_0+n\bar y}{k_n}\), and let \(\sigma_n^2\) be defined by</p>
+$$\nu_n\sigma_n^2=\nu_0\sigma_0^2+(n-1)s^2+\frac{nk_0}{k_n}(\bar y-\mu_0)^2 .$$
+
+<p>The two posteriors are</p>
+$$\theta\mid\tilde\sigma^2,y\sim N\!\Big(\mu_n,\frac{1}{k_n\tilde\sigma^2}\Big). \tag{A}$$
+
+$$\tilde\sigma^2\mid y\sim\text{Gamma}\!\Big(\frac{\nu_n}{2},\frac{\nu_n\sigma_n^2}{2}\Big)\qquad(\text{shape, rate}). \tag{B}$$
+
+<p>To work with (A), standardize \(\theta\). Define</p>
+$$Z=\sqrt{k_n\tilde\sigma^2}\,(\theta-\mu_n).$$
+
+<p>By (A), \(Z\mid\tilde\sigma^2,y\sim N(0,1)\). Solving the definition of \(Z\) for \(\theta\),</p>
+$$\theta=\mu_n+\frac{Z}{\sqrt{k_n\tilde\sigma^2}}. \tag{1}$$
+
+<p>Compare \(\theta\) and \(Z\). The distribution of \(\theta\) changes with \(\tilde\sigma^2\): a small \(\tilde\sigma^2\) gives a wide Normal around \(\mu_n\), and a large one gives a narrow Normal. So \(\theta\) is not independent of \(\tilde\sigma^2\). Standardizing removes this dependence. If \(\tilde\sigma^2=0.5\), then \(Z\sim N(0,1)\); if \(\tilde\sigma^2=10\), then \(Z\sim N(0,1)\); the same holds for every other value. The value of \(\tilde\sigma^2\) tells us nothing about \(Z\), so \(Z\) and \(\tilde\sigma^2\) are independent given \(y\), and \(Z\mid y\sim N(0,1)\).</p>
+
+<p>Next we put \(\tilde\sigma^2\) in a recognizable form. Define</p>
+$$W=\nu_n\sigma_n^2\,\tilde\sigma^2 .$$
+
+<p>Multiplying a Gamma variable by a constant \(c\) divides its rate by \(c\). Here the rate \(\nu_n\sigma_n^2/2\) in (B) is divided by \(\nu_n\sigma_n^2\), which leaves \(1/2\):</p>
+$$W\mid y\sim\text{Gamma}\!\Big(\frac{\nu_n}{2},\frac12\Big)=\chi^2_{\nu_n},\qquad\text{and}\qquad \tilde\sigma^2=\frac{W}{\nu_n\sigma_n^2}. \tag{2}$$
+<button class="chip" data-note="n3" aria-expanded="false">Side note: gamma scaling</button>
+<button class="chip" data-note="n4" aria-expanded="false">Side note: Gamma(ν/2, 1/2) is χ²</button>
+
+<p>Given \(y\), the number \(\nu_n\sigma_n^2\) is a constant, so \(W\) is a function of \(\tilde\sigma^2\) alone. Since \(Z\) is independent of \(\tilde\sigma^2\), it is independent of \(W\).</p>
+
+<p>Substitute (2) into (1) and pull the constants out of the square root:</p>
+$$\theta=\mu_n+\frac{Z}{\sqrt{k_n\,W/(\nu_n\sigma_n^2)}}=\mu_n+\frac{\sigma_n}{\sqrt{k_n}}\cdot\frac{Z}{\sqrt{W/\nu_n}}. \tag{3}$$
+
+<p>In (3), \(Z\sim N(0,1)\), \(W\sim\chi^2_{\nu_n}\), and \(Z\) and \(W\) are independent. By the definition of the \(t\) distribution, \(Z/\sqrt{W/\nu_n}\sim t_{\nu_n}\). Therefore</p>
+<button class="chip" data-note="n5" aria-expanded="false">Side note: definition of t</button>
+
+$$\boxed{\;\frac{\theta-\mu_n}{\sigma_n/\sqrt{k_n}}\;\Big|\;y\;\sim\;t_{\nu_0+n}\;}$$
+
+<p>Equivalently, \(\theta\mid y\) is a location–scale \(t\) with location \(\mu_n\), scale \(\sigma_n/\sqrt{k_n}\), and \(\nu_n=\nu_0+n\) degrees of freedom. \(\qquad\blacksquare\)</p>
+
+<!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
+<div class="note" id="n3">
+<h3>Gamma scaling</h3>
+<p>Let \(X\sim\text{Gamma}(a,b)\) with density \(f_X(x)=\dfrac{b^a}{\Gamma(a)}x^{a-1}e^{-bx}\), and let \(Y=cX\) with \(c>0\). Then</p>
+$$f_Y(y)=\frac1c f_X\!\Big(\frac yc\Big)=\frac1c\cdot\frac{b^a}{\Gamma(a)}\Big(\frac yc\Big)^{a-1}e^{-by/c}=\frac{(b/c)^a}{\Gamma(a)}\,y^{a-1}e^{-(b/c)y}.$$
+<p>This is the \(\text{Gamma}(a,b/c)\) density. In our case \(a=\nu_n/2\), \(b=\nu_n\sigma_n^2/2\) and \(c=\nu_n\sigma_n^2\), so \(b/c=1/2\).</p>
+</div>
+
+<div class="note" id="n4">
+<h3>Gamma(ν/2, 1/2) is χ²</h3>
+<p>The \(\text{Gamma}(\nu/2,\,1/2)\) density is</p>
+$$\frac{(1/2)^{\nu/2}}{\Gamma(\nu/2)}\,x^{\nu/2-1}e^{-x/2},\qquad x>0,$$
+<p>which is the density of the chi-square distribution with \(\nu\) degrees of freedom. Equivalently, \(\chi^2_\nu\) is the distribution of a sum of \(\nu\) squared independent standard Normals.</p>
+<p>Only the rate \(1/2\) gives this form. Any other constant \(c\) in the scaling would still give a Gamma, but not a \(\chi^2\). That is why we scale by \(\nu_n\sigma_n^2\).</p>
+</div>
+
+<div class="note" id="n5">
+<h3>Definition of t</h3>
+<p>If \(Z\sim N(0,1)\) and \(W\sim\chi^2_\nu\) are independent, then</p>
+$$\frac{Z}{\sqrt{W/\nu}}\sim t_\nu .$$
+<p>This is the definition of the Student \(t\) distribution with \(\nu\) degrees of freedom, so no further proof is needed. Here \(\nu=\nu_n=\nu_0+n\).</p>
+<p>The degrees of freedom are twice the Gamma shape in (B). The extra factor \((\tilde\sigma^2)^{1/2}\) from the prior of \(\theta\) is already used up in turning the joint posterior into the Normal in (A) and the Gamma in (B), so it does not add a degree of freedom.</p>
+</div>
+
+</main>
+
+<aside aria-live="polite">
+  <div id="empty">Click a "Side note" button to see the working here.</div>
+  <div id="panel"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+  var wide = window.matchMedia('(min-width: 901px)');
+  var chips = document.querySelectorAll('.chip');
+  var panel = document.getElementById('panel');
+  var empty = document.getElementById('empty');
+  var openId = null;
+
+  function closeAll(){
+    chips.forEach(function(c){ c.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.note.inline-open').forEach(function(n){ n.classList.remove('inline-open'); });
+    panel.innerHTML = ''; empty.style.display = 'block';
+    openId = null;
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var id = chip.dataset.note;
+      var wasOpen = (openId === id);
+      closeAll();
+      if (wasOpen) return;
+      var note = document.getElementById(id);
+      chip.setAttribute('aria-expanded','true');
+      openId = id;
+      if (wide.matches){
+        panel.appendChild(note.cloneNode(true));
+        empty.style.display = 'none';
+      } else {
+        chip.insertAdjacentElement('afterend', note);
+        note.classList.add('inline-open');
+      }
+    });
+  });
+  wide.addEventListener('change', closeAll);
+})();
+</script>
+</body>
+</html>
