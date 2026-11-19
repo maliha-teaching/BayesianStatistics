@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditional posterior of θ given σ² (Section 5.3)</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1b2a2a; --muted:#587070; --teal:#008080; --tealdark:#005959;
+  --panel:#e0f2f1; --rule:#b9d8d6; --chip:#008080; --chipink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10191a; --ink:#e3eeee; --muted:#9bb5b5; --teal:#4fc3c3; --tealdark:#7fd6d6;
+    --panel:#17302f; --rule:#2c4a49; --chip:#4fc3c3; --chipink:#06201f;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Georgia,"Times New Roman",serif}
+header{background:var(--teal);color:#fff;padding:1.1rem 1.5rem}
+header h1{margin:0;font-size:1.35rem;font-weight:600}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem;max-width:1180px;margin:0 auto;padding:1.5rem}
+main{min-width:0}
+main p{margin:.9rem 0;max-width:68ch}
+.model{border-left:4px solid var(--teal);padding:.2rem 1rem;margin:0 0 1.2rem;background:var(--panel)}
+.model b{color:var(--tealdark)}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;margin:.7em 0!important}
+.chip{font:600 .8rem/1 system-ui,sans-serif;background:var(--chip);color:var(--chipink);border:0;border-radius:3px;padding:.4rem .6rem;cursor:pointer;margin:.2rem 0 .6rem}
+.chip[aria-expanded="true"]{outline:2px solid var(--tealdark);outline-offset:2px}
+.chip:focus-visible{outline:3px solid var(--tealdark);outline-offset:2px}
+.note{display:none;background:var(--panel);border-left:4px solid var(--teal);padding:.6rem 1rem;font-size:.95rem;line-height:1.55}
+.note h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--tealdark)}
+.note p{margin:.5rem 0}
+aside{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto}
+#panel .note{display:block}
+#empty{color:var(--muted);font:.9rem/1.5 system-ui,sans-serif;border:1px dashed var(--rule);padding:1rem}
+.inline-open{display:block}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:1rem}
+  aside{display:none}
+}
+@media print{
+  header{background:none;color:#000}
+  aside{display:none}.chip{display:none}
+  .note{display:block;break-inside:avoid}
+  .wrap{display:block}
+}
+</style>
+</head>
+<body>
+<header><h1>Conditional posterior of θ given σ² (Section 5.3)</h1></header>
+
+<div class="wrap">
+<main>
+
+<p>We want the posterior of \(\theta\) when \(\sigma^2\) is treated as known. The plan is to multiply the likelihood by the prior, keep only the factors that involve \(\theta\), and recognize a Normal kernel.</p>
+
+<div class="model">
+<b>Model.</b>
+$$Y_i\mid\theta,\sigma^2\overset{iid}{\sim}N(\theta,\sigma^2),\qquad p(\theta,\sigma^2)\propto\frac{1}{\sigma^2}.$$
+</div>
+
+<p><b>Proof.</b> Let \(\bar y=\frac1n\sum_i y_i\) and \(s^2=\frac1{n-1}\sum_i(y_i-\bar y)^2\). The joint posterior is proportional to the likelihood times the prior:</p>
+$$p(\theta,\sigma^2\mid y)\;\propto\;\prod_{i=1}^n(2\pi\sigma^2)^{-1/2}\exp\Big\{-\frac{(y_i-\theta)^2}{2\sigma^2}\Big\}\cdot(\sigma^2)^{-1}.$$
+
+<p>Collect the powers of \(\sigma^2\) and combine the exponentials into one sum:</p>
+$$p(\theta,\sigma^2\mid y)\;\propto\;(\sigma^2)^{-(n/2+1)}\exp\Big\{-\frac{\sum_i(y_i-\theta)^2}{2\sigma^2}\Big\}. \tag{1}$$
+<button class="chip" data-note="n1" aria-expanded="false">Side note: why an improper prior is allowed</button>
+
+<p>The sum in (1) mixes \(\theta\) with the data. To separate them, add and subtract \(\bar y\) inside the square and expand:</p>
+$$\sum_i(y_i-\theta)^2=\sum_i(y_i-\bar y)^2+2(\bar y-\theta)\sum_i(y_i-\bar y)+n(\bar y-\theta)^2.$$
+<button class="chip" data-note="n2" aria-expanded="false">Side note: the cross term</button>
+
+<p>The middle term is zero because \(\sum_i(y_i-\bar y)=0\). Hence</p>
+$$\sum_i(y_i-\theta)^2=(n-1)s^2+n(\theta-\bar y)^2 .$$
+
+<p>Substitute this into (1) and split the exponential into a part without \(\theta\) and a part with \(\theta\):</p>
+$$p(\theta,\sigma^2\mid y)\;\propto\;\underbrace{(\sigma^2)^{-(n/2+1)}\exp\Big\{-\frac{(n-1)s^2}{2\sigma^2}\Big\}}_{\text{does not involve }\theta}\cdot\exp\Big\{-\frac{n(\theta-\bar y)^2}{2\sigma^2}\Big\}. \tag{2}$$
+
+<p>Now fix \(\sigma^2\). By the definition of a conditional density,</p>
+$$p(\theta\mid y,\sigma^2)=\frac{p(\theta,\sigma^2\mid y)}{p(\sigma^2\mid y)}.$$
+
+<p>The denominator does not involve \(\theta\), so as a function of \(\theta\) the conditional is proportional to the joint. In (2) the first factor does not involve \(\theta\) either, so it is absorbed into the constant, leaving</p>
+$$p(\theta\mid y,\sigma^2)\;\propto\;\exp\Big\{-\frac{n}{2\sigma^2}(\theta-\bar y)^2\Big\}=\exp\Big\{-\frac{(\theta-\bar y)^2}{2\,(\sigma^2/n)}\Big\}. \tag{3}$$
+<button class="chip" data-note="n3" aria-expanded="false">Side note: what counts as a constant</button>
+
+<p>A \(N(m,v)\) density is proportional to \(\exp\{-(\theta-m)^2/(2v)\}\). Comparing with (3) gives \(m=\bar y\) and \(v=\sigma^2/n\). A kernel determines the density, because the normalizing constant is forced by \(\int p=1\). Therefore</p>
+<button class="chip" data-note="n4" aria-expanded="false">Side note: the normalizing constant</button>
+
+$$\boxed{\;\theta\mid y,\sigma^2\;\sim\;N\!\Big(\bar y,\ \frac{\sigma^2}{n}\Big)\;}$$
+
+<p>The posterior is centered at the sample mean and its variance shrinks like \(1/n\). This looks like the sampling distribution of \(\bar Y\), but the roles are reversed: here \(\theta\) is the random quantity and \(\bar y\) is fixed. \(\qquad\blacksquare\)</p>
+
+<!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
+<div class="note" id="n1">
+<h3>Why an improper prior is allowed</h3>
+<p>The prior \(1/\sigma^2\) does not integrate to a finite number, so it is not a probability density. Bayes' rule only needs the product of likelihood and prior to be integrable in \((\theta,\sigma^2)\), so that it can be normalized into a proper posterior.</p>
+<p>That holds here as long as \(n\ge2\), so that \(s^2>0\). The check is done when we derive the marginal of \(\sigma^2\).</p>
+</div>
+
+<div class="note" id="n2">
+<h3>The cross term</h3>
+<p>Write \(y_i-\theta=(y_i-\bar y)+(\bar y-\theta)\) and square:</p>
+$$(y_i-\theta)^2=(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2.$$
+<p>Sum over \(i\). The factor \((\bar y-\theta)\) does not depend on \(i\), so it comes out of the middle sum, and the last term is added \(n\) times. Also</p>
+$$\sum_i(y_i-\bar y)=\sum_i y_i-n\bar y=n\bar y-n\bar y=0 .$$
+</div>
+
+<div class="note" id="n3">
+<h3>What counts as a constant</h3>
+<p>Here "constant" means free of \(\theta\), not free of \(\sigma^2\). We are finding the density of \(\theta\) with \(\sigma^2\) held fixed, so anything that depends only on \(\sigma^2\) and \(y\), such as \((\sigma^2)^{-(n/2+1)}\) and \(\exp\{-(n-1)s^2/(2\sigma^2)\}\), can be dropped.</p>
+<p>This would be wrong when finding the marginal of \(\sigma^2\), because there \(\sigma^2\) is the variable.</p>
+</div>
+
+<div class="note" id="n4">
+<h3>The normalizing constant</h3>
+<p>For any \(m\) and \(v>0\),</p>
+$$\int_{-\infty}^{\infty}e^{-(\theta-m)^2/(2v)}\,d\theta=\sqrt{2\pi v}.$$
+<p>With \(m=\bar y\) and \(v=\sigma^2/n\), the full conditional density is</p>
+$$p(\theta\mid y,\sigma^2)=\sqrt{\frac{n}{2\pi\sigma^2}}\;\exp\Big\{-\frac{n(\theta-\bar y)^2}{2\sigma^2}\Big\}.$$
+<p>The factor \(\sqrt{n/(2\pi\sigma^2)}\) depends on \(\sigma^2\). It matters later, when we average this density over the posterior of \(\sigma^2\).</p>
+</div>
+
+</main>
+
+<aside aria-live="polite">
+  <div id="empty">Click a "Side note" button to see the working here.</div>
+  <div id="panel"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+  var wide = window.matchMedia('(min-width: 901px)');
+  var chips = document.querySelectorAll('.chip');
+  var panel = document.getElementById('panel');
+  var empty = document.getElementById('empty');
+  var openId = null;
+
+  function closeAll(){
+    chips.forEach(function(c){ c.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.note.inline-open').forEach(function(n){ n.classList.remove('inline-open'); });
+    panel.innerHTML = ''; empty.style.display = 'block';
+    openId = null;
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var id = chip.dataset.note;
+      var wasOpen = (openId === id);
+      closeAll();
+      if (wasOpen) return;
+      var note = document.getElementById(id);
+      chip.setAttribute('aria-expanded','true');
+      openId = id;
+      if (wide.matches){
+        panel.appendChild(note.cloneNode(true));
+        empty.style.display = 'none';
+      } else {
+        chip.insertAdjacentElement('afterend', note);
+        note.classList.add('inline-open');
+      }
+    });
+  });
+  wide.addEventListener('change', closeAll);
+})();
+</script>
+</body>
+</html>
