@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marginal posterior of 1/σ² (Section 5.3)</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1b2a2a; --muted:#587070; --teal:#008080; --tealdark:#005959;
+  --panel:#e0f2f1; --rule:#b9d8d6; --chip:#008080; --chipink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10191a; --ink:#e3eeee; --muted:#9bb5b5; --teal:#4fc3c3; --tealdark:#7fd6d6;
+    --panel:#17302f; --rule:#2c4a49; --chip:#4fc3c3; --chipink:#06201f;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Georgia,"Times New Roman",serif}
+header{background:var(--teal);color:#fff;padding:1.1rem 1.5rem}
+header h1{margin:0;font-size:1.35rem;font-weight:600}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem;max-width:1180px;margin:0 auto;padding:1.5rem}
+main{min-width:0}
+main p{margin:.9rem 0;max-width:68ch}
+.model{border-left:4px solid var(--teal);padding:.2rem 1rem;margin:0 0 1.2rem;background:var(--panel)}
+.model b{color:var(--tealdark)}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;margin:.7em 0!important}
+.chip{font:600 .8rem/1 system-ui,sans-serif;background:var(--chip);color:var(--chipink);border:0;border-radius:3px;padding:.4rem .6rem;cursor:pointer;margin:.2rem 0 .6rem}
+.chip[aria-expanded="true"]{outline:2px solid var(--tealdark);outline-offset:2px}
+.chip:focus-visible{outline:3px solid var(--tealdark);outline-offset:2px}
+.note{display:none;background:var(--panel);border-left:4px solid var(--teal);padding:.6rem 1rem;font-size:.95rem;line-height:1.55}
+.note h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--tealdark)}
+.note p{margin:.5rem 0}
+aside{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto}
+#panel .note{display:block}
+#empty{color:var(--muted);font:.9rem/1.5 system-ui,sans-serif;border:1px dashed var(--rule);padding:1rem}
+.inline-open{display:block}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:1rem}
+  aside{display:none}
+}
+@media print{
+  header{background:none;color:#000}
+  aside{display:none}.chip{display:none}
+  .note{display:block;break-inside:avoid}
+  .wrap{display:block}
+}
+</style>
+</head>
+<body>
+<header><h1>Marginal posterior of 1/σ² (Section 5.3)</h1></header>
+
+<div class="wrap">
+<main>
+
+<p>We want the posterior of the precision \(\tilde\sigma^2=1/\sigma^2\). We integrate \(\theta\) out of the joint posterior and recognize a Gamma kernel.</p>
+
+<div class="model">
+<b>Model.</b>
+$$Y_i\mid\theta,\sigma^2\overset{iid}{\sim}N(\theta,\sigma^2),\qquad p(\theta,\sigma^2)\propto\frac{1}{\sigma^2}.$$
+</div>
+
+<p><b>Proof.</b> With \(\bar y=\frac1n\sum_i y_i\) and \(s^2=\frac1{n-1}\sum_i(y_i-\bar y)^2\), the joint posterior from the conditional derivation is</p>
+$$p(\theta,\sigma^2\mid y)\;\propto\;(\sigma^2)^{-(n/2+1)}\exp\Big\{-\frac{(n-1)s^2}{2\sigma^2}\Big\}\exp\Big\{-\frac{n(\theta-\bar y)^2}{2\sigma^2}\Big\}. \tag{1}$$
+
+<p>Integrate over \(\theta\). The first two factors do not involve \(\theta\), so they come out of the integral:</p>
+$$p(\sigma^2\mid y)\;\propto\;(\sigma^2)^{-(n/2+1)}\exp\Big\{-\frac{(n-1)s^2}{2\sigma^2}\Big\}\int_{-\infty}^{\infty}\exp\Big\{-\frac{n(\theta-\bar y)^2}{2\sigma^2}\Big\}d\theta. \tag{2}$$
+
+<p>The integral is the unnormalized \(N(\bar y,\sigma^2/n)\) density, so it equals \(\sqrt{2\pi\sigma^2/n}\propto(\sigma^2)^{1/2}\).</p>
+<button class="chip" data-note="n1" aria-expanded="false">Side note: Gaussian integral</button>
+
+<p>The powers of \(\sigma^2\) combine as \(-(\frac n2+1)+\frac12=-(\frac{n-1}2+1)\), so</p>
+$$p(\sigma^2\mid y)\;\propto\;(\sigma^2)^{-\left(\frac{n-1}2+1\right)}\exp\Big\{-\frac{(n-1)s^2}{2\sigma^2}\Big\}. \tag{3}$$
+
+<p>This is an inverse-gamma kernel with shape \(\frac{n-1}2\) and scale \(\frac{(n-1)s^2}2\).</p>
+<button class="chip" data-note="n2" aria-expanded="false">Side note: Gamma and inverse-gamma kernels</button>
+
+<p>Now change variables to \(\tilde\sigma^2=1/\sigma^2\). Then \(\sigma^2=(\tilde\sigma^2)^{-1}\) and the Jacobian is \(\left|\frac{d\sigma^2}{d\tilde\sigma^2}\right|=(\tilde\sigma^2)^{-2}\). Substituting into (3):</p>
+$$p(\tilde\sigma^2\mid y)\;\propto\;(\tilde\sigma^2)^{\frac{n-1}2+1}\,e^{-\frac{(n-1)s^2}{2}\tilde\sigma^2}\cdot(\tilde\sigma^2)^{-2}=(\tilde\sigma^2)^{\frac{n-1}2-1}\,e^{-\frac{(n-1)s^2}{2}\tilde\sigma^2}. \tag{4}$$
+<button class="chip" data-note="n3" aria-expanded="false">Side note: the Jacobian</button>
+
+<p>This is a Gamma kernel. Since \((n-1)s^2=\sum_i(y_i-\bar y)^2\),</p>
+
+$$\boxed{\;\tilde\sigma^2\mid y\;\sim\;\text{Gamma}\!\Big(\frac{n-1}{2},\ \frac{(n-1)s^2}{2}\Big)\quad(\text{shape, rate})\;}$$
+
+<p>Equivalently, \(\sigma^2\mid y\) is inverse-gamma with the same parameters. The posterior is proper only when \(n\ge2\).  \(\qquad\blacksquare\)</p>
+<button class="chip" data-note="n4" aria-expanded="false">Side note: why n ≥ 2</button>
+
+<!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
+<div class="note" id="n1">
+<h3>Gaussian integral</h3>
+<p>For any \(m\) and \(v>0\),</p>
+$$\int_{-\infty}^{\infty}e^{-(\theta-m)^2/(2v)}\,d\theta=\sqrt{2\pi v}.$$
+<p>Here \(m=\bar y\) and \(v=\sigma^2/n\), so the integral is \(\sqrt{2\pi\sigma^2/n}\). This now depends on \(\sigma^2\), so only the constants \(\sqrt{2\pi/n}\) may be dropped, and \((\sigma^2)^{1/2}\) must be kept.</p>
+</div>
+
+<div class="note" id="n2">
+<h3>Gamma and inverse-gamma kernels</h3>
+<p>Gamma\((a,b)\) with rate \(b\), and inverse-gamma\((a,b)\) with scale \(b\), have kernels</p>
+$$\phi^{a-1}e^{-b\phi}\qquad\text{and}\qquad x^{-(a+1)}e^{-b/x}.$$
+<p>Matching (3) gives \(a=\frac{n-1}2\) and \(b=\frac{(n-1)s^2}2\). If \(X\) is inverse-gamma\((a,b)\), then \(1/X\) is Gamma\((a,b)\), which is what (4) shows.</p>
+</div>
+
+<div class="note" id="n3">
+<h3>The Jacobian</h3>
+<p>If \(\phi=1/x\), then \(x=1/\phi\) and \(p_\phi(\phi)=p_x(1/\phi)\,\left|\frac{dx}{d\phi}\right|=p_x(1/\phi)\,\phi^{-2}\).</p>
+<p>In (3), \((1/\phi)^{-(a+1)}=\phi^{a+1}\) and \(e^{-b/(1/\phi)}=e^{-b\phi}\). Multiplying by \(\phi^{-2}\) gives \(\phi^{a-1}e^{-b\phi}\).</p>
+</div>
+
+<div class="note" id="n4">
+<h3>Why n ≥ 2</h3>
+<p>The Gamma kernel in (4) is integrable only if the shape \(\frac{n-1}2>0\) and the rate \(\frac{(n-1)s^2}2>0\). This needs \(n\ge2\) and \(s^2>0\).</p>
+<p>For \(n=1\), (3) is \(\propto(\sigma^2)^{-1}\), which is not integrable, so the posterior is improper. This settles the check promised in the conditional derivation. With \(n\ge2\), \(s^2=0\) only if all \(y_i\) are equal, which has probability zero under a continuous model.</p>
+</div>
+
+</main>
+
+<aside aria-live="polite">
+  <div id="empty">Click a "Side note" button to see the working here.</div>
+  <div id="panel"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+  var wide = window.matchMedia('(min-width: 901px)');
+  var chips = document.querySelectorAll('.chip');
+  var panel = document.getElementById('panel');
+  var empty = document.getElementById('empty');
+  var openId = null;
+
+  function closeAll(){
+    chips.forEach(function(c){ c.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.note.inline-open').forEach(function(n){ n.classList.remove('inline-open'); });
+    panel.innerHTML = ''; empty.style.display = 'block';
+    openId = null;
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var id = chip.dataset.note;
+      var wasOpen = (openId === id);
+      closeAll();
+      if (wasOpen) return;
+      var note = document.getElementById(id);
+      chip.setAttribute('aria-expanded','true');
+      openId = id;
+      if (wide.matches){
+        panel.appendChild(note.cloneNode(true));
+        empty.style.display = 'none';
+      } else {
+        chip.insertAdjacentElement('afterend', note);
+        note.classList.add('inline-open');
+      }
+    });
+  });
+  wide.addEventListener('change', closeAll);
+})();
+</script>
+</body>
+</html>
