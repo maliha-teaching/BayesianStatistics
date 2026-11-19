@@ -70,11 +70,10 @@ $$p(\theta,\sigma^2\mid y)\;\propto\;\prod_{i=1}^n(2\pi\sigma^2)^{-1/2}\exp\Big\
 
 <p>Collect the powers of \(\sigma^2\) and combine the exponentials into one sum:</p>
 $$p(\theta,\sigma^2\mid y)\;\propto\;(\sigma^2)^{-(n/2+1)}\exp\Big\{-\frac{\sum_i(y_i-\theta)^2}{2\sigma^2}\Big\}. \tag{1}$$
-<button class="chip" data-note="n1" aria-expanded="false">Side note: why an improper prior is allowed</button>
 
 <p>The sum in (1) mixes \(\theta\) with the data. To separate them, add and subtract \(\bar y\) inside the square and expand:</p>
 $$\sum_i(y_i-\theta)^2=\sum_i(y_i-\bar y)^2+2(\bar y-\theta)\sum_i(y_i-\bar y)+n(\bar y-\theta)^2.$$
-<button class="chip" data-note="n2" aria-expanded="false">Side note: the cross term</button>
+<button class="chip" data-note="n1" aria-expanded="false">Side note: the cross term</button>
 
 <p>The middle term is zero because \(\sum_i(y_i-\bar y)=0\). Hence</p>
 $$\sum_i(y_i-\theta)^2=(n-1)s^2+n(\theta-\bar y)^2 .$$
@@ -87,23 +86,17 @@ $$p(\theta\mid y,\sigma^2)=\frac{p(\theta,\sigma^2\mid y)}{p(\sigma^2\mid y)}.$$
 
 <p>The denominator does not involve \(\theta\), so as a function of \(\theta\) the conditional is proportional to the joint. In (2) the first factor does not involve \(\theta\) either, so it is absorbed into the constant, leaving</p>
 $$p(\theta\mid y,\sigma^2)\;\propto\;\exp\Big\{-\frac{n}{2\sigma^2}(\theta-\bar y)^2\Big\}=\exp\Big\{-\frac{(\theta-\bar y)^2}{2\,(\sigma^2/n)}\Big\}. \tag{3}$$
-<button class="chip" data-note="n3" aria-expanded="false">Side note: what counts as a constant</button>
+<button class="chip" data-note="n2" aria-expanded="false">Side note: what counts as a constant</button>
 
 <p>A \(N(m,v)\) density is proportional to \(\exp\{-(\theta-m)^2/(2v)\}\). Comparing with (3) gives \(m=\bar y\) and \(v=\sigma^2/n\). A kernel determines the density, because the normalizing constant is forced by \(\int p=1\). Therefore</p>
-<button class="chip" data-note="n4" aria-expanded="false">Side note: the normalizing constant</button>
+<button class="chip" data-note="n3" aria-expanded="false">Side note: the normalizing constant</button>
 
 $$\boxed{\;\theta\mid y,\sigma^2\;\sim\;N\!\Big(\bar y,\ \frac{\sigma^2}{n}\Big)\;}$$
 
-<p>The posterior is centered at the sample mean and its variance shrinks like \(1/n\). This looks like the sampling distribution of \(\bar Y\), but the roles are reversed: here \(\theta\) is the random quantity and \(\bar y\) is fixed. \(\qquad\blacksquare\)</p>
+<p>The posterior is centered at the sample mean and its variance shrinks like \(1/n\). \(\qquad\blacksquare\)</p>
 
 <!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
 <div class="note" id="n1">
-<h3>Why an improper prior is allowed</h3>
-<p>The prior \(1/\sigma^2\) does not integrate to a finite number, so it is not a probability density. Bayes' rule only needs the product of likelihood and prior to be integrable in \((\theta,\sigma^2)\), so that it can be normalized into a proper posterior.</p>
-<p>That holds here as long as \(n\ge2\), so that \(s^2>0\). The check is done when we derive the marginal of \(\sigma^2\).</p>
-</div>
-
-<div class="note" id="n2">
 <h3>The cross term</h3>
 <p>Write \(y_i-\theta=(y_i-\bar y)+(\bar y-\theta)\) and square:</p>
 $$(y_i-\theta)^2=(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2.$$
@@ -111,19 +104,18 @@ $$(y_i-\theta)^2=(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2.$
 $$\sum_i(y_i-\bar y)=\sum_i y_i-n\bar y=n\bar y-n\bar y=0 .$$
 </div>
 
-<div class="note" id="n3">
+<div class="note" id="n2">
 <h3>What counts as a constant</h3>
 <p>Here "constant" means free of \(\theta\), not free of \(\sigma^2\). We are finding the density of \(\theta\) with \(\sigma^2\) held fixed, so anything that depends only on \(\sigma^2\) and \(y\), such as \((\sigma^2)^{-(n/2+1)}\) and \(\exp\{-(n-1)s^2/(2\sigma^2)\}\), can be dropped.</p>
 <p>This would be wrong when finding the marginal of \(\sigma^2\), because there \(\sigma^2\) is the variable.</p>
 </div>
 
-<div class="note" id="n4">
+<div class="note" id="n3">
 <h3>The normalizing constant</h3>
 <p>For any \(m\) and \(v>0\),</p>
 $$\int_{-\infty}^{\infty}e^{-(\theta-m)^2/(2v)}\,d\theta=\sqrt{2\pi v}.$$
 <p>With \(m=\bar y\) and \(v=\sigma^2/n\), the full conditional density is</p>
 $$p(\theta\mid y,\sigma^2)=\sqrt{\frac{n}{2\pi\sigma^2}}\;\exp\Big\{-\frac{n(\theta-\bar y)^2}{2\sigma^2}\Big\}.$$
-<p>The factor \(\sqrt{n/(2\pi\sigma^2)}\) depends on \(\sigma^2\). It matters later, when we average this density over the posterior of \(\sigma^2\).</p>
 </div>
 
 </main>
