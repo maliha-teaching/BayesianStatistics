@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditional posterior of θ (Section 5.2)</title>
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#1b2a2a; --muted:#587070; --teal:#008080; --tealdark:#005959;
+  --panel:#e0f2f1; --rule:#b9d8d6; --chip:#008080; --chipink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10191a; --ink:#e3eeee; --muted:#9bb5b5; --teal:#4fc3c3; --tealdark:#7fd6d6;
+    --panel:#17302f; --rule:#2c4a49; --chip:#4fc3c3; --chipink:#06201f;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:17px/1.65 Georgia,"Times New Roman",serif}
+header{background:var(--teal);color:#fff;padding:1.1rem 1.5rem}
+header h1{margin:0;font-size:1.35rem;font-weight:600}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:2rem;max-width:1180px;margin:0 auto;padding:1.5rem}
+main{min-width:0}
+main p{margin:.9rem 0;max-width:68ch}
+.model{border-left:4px solid var(--teal);padding:.2rem 1rem;margin:0 0 1.2rem;background:var(--panel)}
+.model b{color:var(--tealdark)}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;margin:.7em 0!important}
+.chip{font:600 .8rem/1 system-ui,sans-serif;background:var(--chip);color:var(--chipink);border:0;border-radius:3px;padding:.4rem .6rem;cursor:pointer;margin:.2rem 0 .6rem}
+.chip[aria-expanded="true"]{outline:2px solid var(--tealdark);outline-offset:2px}
+.chip:focus-visible{outline:3px solid var(--tealdark);outline-offset:2px}
+.note{display:none;background:var(--panel);border-left:4px solid var(--teal);padding:.6rem 1rem;font-size:.95rem;line-height:1.55}
+.note h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--tealdark)}
+.note p{margin:.5rem 0}
+aside{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto}
+#panel .note{display:block}
+#empty{color:var(--muted);font:.9rem/1.5 system-ui,sans-serif;border:1px dashed var(--rule);padding:1rem}
+.inline-open{display:block}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:1rem}
+  aside{display:none}
+}
+@media print{
+  header{background:none;color:#000}
+  aside{display:none}.chip{display:none}
+  .note{display:block;break-inside:avoid}
+  .wrap{display:block}
+}
+</style>
+</head>
+<body>
+<header><h1>Conditional posterior of θ given σ² (Section 5.2)</h1></header>
+
+<div class="wrap">
+<main>
+
+<div class="model">
+<b>Model.</b>
+$$Y_i\mid\theta,\sigma^2\overset{iid}{\sim}N(\theta,\sigma^2),\qquad \sigma^2\text{ known},\qquad \theta\mid\sigma^2\sim N(\mu_0,\tau_0^2).$$
+</div>
+
+<p><b>Proof.</b> By Bayes' rule, keeping only factors that involve \(\theta\),</p>
+$$p(\theta\mid y_1,\dots,y_n,\sigma^2)\;\propto\;p(\theta\mid\sigma^2)\,p(y_1,\dots,y_n\mid\theta,\sigma^2). \tag{1}$$
+<button class="chip" data-note="n1" aria-expanded="false">Side note: dropping constants</button>
+
+<p>The likelihood is</p>
+$$p(y_1,\dots,y_n\mid\theta,\sigma^2)=(2\pi\sigma^2)^{-n/2}\exp\Big\{-\frac1{2\sigma^2}\sum_{i=1}^n(y_i-\theta)^2\Big\}\;\propto\;\exp\Big\{-\frac1{2\sigma^2}\sum_{i=1}^n(y_i-\theta)^2\Big\}. \tag{2}$$
+
+<p>The prior is</p>
+$$p(\theta\mid\sigma^2)\;\propto\;\exp\Big\{-\frac1{2\tau_0^2}(\theta-\mu_0)^2\Big\}. \tag{3}$$
+
+<p>Substituting (2) and (3) into (1) and adding exponents,</p>
+$$p(\theta\mid y_1,\dots,y_n,\sigma^2)\;\propto\;\exp\Big\{-\frac12\Big[\frac{(\theta-\mu_0)^2}{\tau_0^2}+\frac{\sum_i(y_i-\theta)^2}{\sigma^2}\Big]\Big\}. \tag{4}$$
+
+<p>Expand the sum of squares:</p>
+$$\sum_{i=1}^n(y_i-\theta)^2=\sum_i y_i^2-2\theta\sum_i y_i+n\theta^2. \tag{5}$$
+<button class="chip" data-note="n2" aria-expanded="false">Side note: the expansion</button>
+
+<p>Insert (5) into the bracket of (4) and collect powers of \(\theta\):</p>
+$$\frac{\theta^2-2\theta\mu_0+\mu_0^2}{\tau_0^2}+\frac{\sum_i y_i^2-2\theta\sum_i y_i+n\theta^2}{\sigma^2}=a\theta^2-2b\theta+c, \tag{6}$$
+<p>where</p>
+$$a=\frac1{\tau_0^2}+\frac n{\sigma^2},\qquad b=\frac{\mu_0}{\tau_0^2}+\frac{\sum_i y_i}{\sigma^2},\qquad c=\frac{\mu_0^2}{\tau_0^2}+\frac{\sum_i y_i^2}{\sigma^2}.$$
+
+<p>The term \(c\) does not involve \(\theta\), so</p>
+$$p(\theta\mid y_1,\dots,y_n,\sigma^2)\;\propto\;\exp\Big\{-\frac12\big(a\theta^2-2b\theta\big)\Big\}. \tag{7}$$
+
+<p>Complete the square:</p>
+$$a\theta^2-2b\theta=a\Big(\theta-\frac ba\Big)^2-\frac{b^2}{a}. \tag{8}$$
+<button class="chip" data-note="n3" aria-expanded="false">Side note: completing the square</button>
+
+<p>The term \(b^2/a\) does not involve \(\theta\), so</p>
+$$p(\theta\mid y_1,\dots,y_n,\sigma^2)\;\propto\;\exp\Big\{-\frac12\,a\Big(\theta-\frac ba\Big)^2\Big\}=\exp\Big\{-\frac12\Big(\frac{\theta-b/a}{1/\sqrt a}\Big)^2\Big\}. \tag{9}$$
+
+<p>Expression (9) is the kernel of a normal density with mean \(b/a\) and variance \(1/a\).</p>
+<button class="chip" data-note="n4" aria-expanded="false">Side note: kernel determines the density</button>
+
+<p>Set \(\tau_n^2=1/a\) and \(\mu_n=b/a\). Using \(\sum_i y_i=n\bar y\),</p>
+$$\tau_n^2=\frac{1}{\frac1{\tau_0^2}+\frac n{\sigma^2}},\qquad \mu_n=\frac{\frac1{\tau_0^2}\mu_0+\frac n{\sigma^2}\bar y}{\frac1{\tau_0^2}+\frac n{\sigma^2}}.$$
+
+<p>Therefore</p>
+$$\boxed{\;\theta\mid y_1,\dots,y_n,\sigma^2\;\sim\;N(\mu_n,\tau_n^2)\;}\qquad\blacksquare$$
+
+<!-- ===== Side notes (hidden; shown in side panel or inline) ===== -->
+<div class="note" id="n1">
+<h3>Dropping constants</h3>
+<p>Any factor that does not involve \(\theta\) multiplies the posterior by a constant. The normalizing constant \(1/p(y_1,\dots,y_n\mid\sigma^2)\) and \((2\pi\sigma^2)^{-n/2}\) are of this type, so they are absorbed into the proportionality sign.</p>
+</div>
+
+<div class="note" id="n2">
+<h3>The expansion</h3>
+$$(y_i-\theta)^2=y_i^2-2\theta y_i+\theta^2.$$
+<p>Summing over \(i=1,\dots,n\) gives \(\sum y_i^2-2\theta\sum y_i+n\theta^2\), since \(\theta^2\) is added \(n\) times.</p>
+</div>
+
+<div class="note" id="n3">
+<h3>Completing the square</h3>
+<p>Expand the right side of (8):</p>
+$$a\Big(\theta-\frac ba\Big)^2-\frac{b^2}{a}=a\theta^2-2b\theta+\frac{b^2}{a}-\frac{b^2}{a}=a\theta^2-2b\theta.$$
+<p>Then \(\exp\{-\frac12(a\theta^2-2b\theta)\}=\exp\{-\frac12 a(\theta-b/a)^2\}\exp\{\frac{b^2}{2a}\}\), and the last factor is constant in \(\theta\).</p>
+</div>
+
+<div class="note" id="n4">
+<h3>Kernel determines the density</h3>
+<p>The \(N(m,v)\) density is \((2\pi v)^{-1/2}\exp\{-\frac12((\theta-m)/\sqrt v)^2\}\). In (9), \(m=b/a\) and \(v=1/a\). Two densities with proportional kernels are equal after normalization, so the posterior is \(N(b/a,1/a)\).</p>
+</div>
+
+</main>
+
+<aside aria-live="polite">
+  <div id="empty">Click a "Side note" button to see the working here.</div>
+  <div id="panel"></div>
+</aside>
+</div>
+
+<script>
+(function(){
+  var wide = window.matchMedia('(min-width: 901px)');
+  var chips = document.querySelectorAll('.chip');
+  var panel = document.getElementById('panel');
+  var empty = document.getElementById('empty');
+  var openId = null;
+
+  function closeAll(){
+    chips.forEach(function(c){ c.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.note.inline-open').forEach(function(n){ n.classList.remove('inline-open'); });
+    panel.innerHTML = ''; empty.style.display = 'block';
+    openId = null;
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var id = chip.dataset.note;
+      var wasOpen = (openId === id);
+      closeAll();
+      if (wasOpen) return;
+      var note = document.getElementById(id);
+      chip.setAttribute('aria-expanded','true');
+      openId = id;
+      if (wide.matches){
+        panel.appendChild(note.cloneNode(true));
+        empty.style.display = 'none';
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([panel]);
+      } else {
+        chip.insertAdjacentElement('afterend', note);
+        note.classList.add('inline-open');
+      }
+    });
+  });
+  wide.addEventListener('change', closeAll);
+})();
+</script>
+</body>
+</html>
